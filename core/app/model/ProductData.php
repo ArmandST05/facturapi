@@ -22,12 +22,63 @@ class ProductData {
 	//INSUMOS (3)
 	//MEDICAMENTO (4)
 
-	public function add(){
-        $sql = "INSERT INTO ".self::$tablename." (barcode, name, price_in, price_out, unit, user_id, presentation, product_key, created_at) 
-            VALUES 
-            (\"$this->barcode\", \"$this->name\", \"$this->price_in\", \"$this->price_out\", \"$this->unit\", \"$this->user_id\", \"$this->presentation\", \"$this->product_key\", $this->created_at)";
-        return Executor::doit($sql);
-    }
+	public function add() {
+		// Datos del producto desde el formulario
+		$description = $this->description;
+		$product_key = $this->product_key;
+		$price = $this->price;
+	
+		// URL de la API de Facturapi
+		$url = 'https://api.facturapi.com/v2/products';
+	
+		// Los datos para crear el producto según la documentación de Facturapi
+		$data = [
+			'description' => $description,
+			'product_key' => $product_key,
+			'price' => $price,
+			'tax_included' => true, // Puedes modificar esto según tus necesidades
+			'taxability' => '01', // Asegúrate de que esto sea lo que necesitas
+			'taxes' => [
+				[
+					'type' => 'IVA',
+					'rate' => 0.16
+				]
+			],
+			'local_taxes' => [],
+			'unit_key' => 'H87', // Asegúrate de que este código de unidad sea el correcto
+			'unit_name' => 'Elemento', // Aquí puedes modificar el nombre de la unidad
+			'sku' => 'string' // Puedes modificar este valor si es necesario
+		];
+	
+		// Inicializar cURL
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			'Authorization: Bearer YOUR_API_KEY', // Reemplaza 'YOUR_API_KEY' con tu clave de API de Facturapi
+			'Content-Type: application/json'
+		]);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+	
+		// Ejecutar cURL y obtener respuesta
+		$response = curl_exec($ch);
+		curl_close($ch);
+	
+		// Verificar la respuesta de la API
+		$responseData = json_decode($response, true);
+		if (isset($responseData['id'])) {
+			// Si el producto fue creado exitosamente, puedes almacenar los datos en tu base de datos
+			$sql = "INSERT INTO ".self::$tablename." (barcode, name, price_in, price_out, unit, user_id, presentation, product_key, created_at) 
+					VALUES 
+					(\"$this->barcode\", \"$this->name\", \"$this->price_in\", \"$this->price_out\", \"$this->unit\", \"$this->user_id\", \"$this->presentation\", \"$product_key\", $this->created_at)";
+			return Executor::doit($sql);
+		} else {
+			// Si hubo un error, manejarlo aquí
+			echo "Error al crear el producto: " . $responseData['message'];
+			return false;
+		}
+	}
+	
 
 	public function update(){
         $sql = "UPDATE ".self::$tablename." 

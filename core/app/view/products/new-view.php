@@ -4,25 +4,27 @@
     <div id="result"></div>
     <br>
     <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="index.php?action=products/add" role="form" autocomplete="off">
-      <div class="form-group">
-        <label for="inputEmail1" class="col-lg-2 control-label">Código de Barras*</label>
-        <div class="col-md-6">
-          <input type="text" name="barcode" id="barcode" class="form-control" id="barcode" placeholder="Codigo de Barras del Medicamento">
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="inputEmail1" class="col-lg-2 control-label">Nombre*</label>
-        <div class="col-md-6">
-          <input type="text" name="name" required class="form-control" id="name" placeholder="Nombre del Medicamento">
-        </div>
-      </div>
-      <div style="display:none;" id="productDetails">
-        <div class="form-group">
-          <label for="inputEmail1" class="col-lg-2 control-label">Costo*</label>
-          <div class="col-md-6">
-            <input type="number" step=".01" min="0" name="priceIn" required class="form-control" id="priceIn" placeholder="Precio de entrada">
-          </div>
-        </div>
+    <div class="form-group">
+  <label for="inputEmail1" class="col-lg-2 control-label">Descripción*</label>
+  <div class="col-md-6">
+    <input type="text" name="description" required class="form-control" placeholder="Descripción del Producto" />
+  </div>
+</div>
+
+<div class="form-group">
+  <label for="inputEmail1" class="col-lg-2 control-label">Clave del Producto*</label>
+  <div class="col-md-6">
+    <input type="text" name="product_key" required class="form-control" placeholder="Clave del Producto" />
+  </div>
+</div>
+
+<div class="form-group">
+  <label for="inputEmail1" class="col-lg-2 control-label">Precio*</label>
+  <div class="col-md-6">
+    <input type="number" step="0.01" min="0" name="price" required class="form-control" placeholder="Precio del Producto" />
+  </div>
+</div>
+
         <div class="form-group">
           <label for="inputEmail1" class="col-lg-2 control-label">Precio de Salida*</label>
           <div class="col-md-6">
