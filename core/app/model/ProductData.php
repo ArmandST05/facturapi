@@ -1,10 +1,9 @@
 <?php
-use Facturapi\Facturapi;
 
 class ProductData {
-	public static $tablename = "products";
+    public static $tablename = "products";
 
-	public function __construct() {
+    public function __construct() {
         $this->name = "";
         $this->price_in = "";
         $this->price_out = "";
@@ -20,68 +19,64 @@ class ProductData {
         $this->fraction = "";
     }
 
-	public function getExpenseCategory(){ return ExpenseCategoryData::getById($this->expense_category_id);}
-	public function getType(){ return ProductTypeData::getById($this->type_id);}
+    public function getExpenseCategory(){ 
+        return ExpenseCategoryData::getById($this->expense_category_id);
+    }
+    
+    public function getType(){ 
+        return ProductTypeData::getById($this->type_id);
+    }
 
-	//PRODUCT TYPES
-	//CONCEPTOS INGRESOS(1)
-	//CONCEPTOS EGRESOS (2)
-	//INSUMOS (3)
-	//MEDICAMENTO (4)
-// Método para agregar un producto
-  // Método para agregar un producto
-  public function add() {
-	// Crear instancia de FacturapiClient
-	$facturapi = new Facturapi('sk_test_3NEzMn7dW2xqmwalkp2z0LyvOq418boRLgyvQOZG56'); // Reemplaza con tu clave API válida
+    // Método para agregar un producto
+    public function add() {
+        try {
+            // Datos del producto desde la clase
+            $productData = [
+                "name" => $this->name,
+                "price_in" => $this->price_in,
+                "price_out" => $this->price_out,
+                "unit" => $this->unit,
+                "user_id" => $this->user_id,
+                "presentation" => $this->presentation,
+                "product_key" => $this->product_key,
+                "created_at" => $this->created_at,
+                "minimum_inventory" => $this->minimum_inventory,
+                "initial_inventory" => $this->initial_inventory,
+                "expiration_date" => $this->expiration_date,
+                "lot" => $this->lot,
+                "fraction" => $this->fraction
+            ];
 
-	try {
-		// Datos del producto desde la clase
-		$productData = [
-			"description" => $this->name, // Asegúrate de que esto sea lo que quieres para la descripción
-			"product_key" => $this->product_key,
-			"price" => $this->price_out, // Asegúrate de que sea el precio correcto
-			"sku" => $this->product_key // O usa otro campo para el SKU si es necesario
-		];
+            // Insertar los datos del producto en la base de datos
+            $sql = "INSERT INTO " . self::$tablename . " 
+                    (name, price_in, price_out, unit, user_id, presentation, product_key, created_at, minimum_inventory, initial_inventory, expiration_date, lot, fraction) 
+                    VALUES 
+                    (
+                        \"{$this->name}\", 
+                        \"{$this->price_in}\", 
+                        \"{$this->price_out}\", 
+                        \"{$this->unit}\", 
+                        \"{$this->user_id}\", 
+                        \"{$this->presentation}\", 
+                        \"{$this->product_key}\", 
+                        NOW(), 
+                        \"{$this->minimum_inventory}\", 
+                        \"{$this->initial_inventory}\", 
+                        \"{$this->expiration_date}\", 
+                        \"{$this->lot}\", 
+                        \"{$this->fraction}\"
+                    )";
 
-		// Crear el producto en Facturapi
-		$product = $facturapi->Products->create($productData);
+            // Ejecutar la inserción en la base de datos
+            return Executor::doit($sql);
+        } catch (Exception $e) {
+            // Manejo de excepciones
+            echo "Error al agregar el producto: " . $e->getMessage();
+            return false;
+        }
+    }
 
-		// Verifica si el producto se creó correctamente
-		if (isset($product->id)) {
-			// Si el producto se creó exitosamente en Facturapi, guárdalo en la base de datos
-			$sql = "INSERT INTO " . self::$tablename . " 
-					(name, price_in, price_out, unit, user_id, presentation, product_key, created_at, minimum_inventory, initial_inventory, expiration_date, lot, fraction, sku) 
-					VALUES 
-					(
-						\"$this->name\", 
-						\"$this->price_in\", 
-						\"$this->price_out\", 
-						\"$this->unit\", 
-						\"$this->user_id\", 
-						\"$this->presentation\", 
-						\"$this->product_key\", 
-						NOW(), 
-						\"$this->minimum_inventory\", 
-						\"$this->initial_inventory\", 
-						\"$this->expiration_date\", 
-						\"$this->lot\", 
-						\"$this->fraction\", 
-						\"$this->product_key\"  -- SKU también debe ser almacenado en la base de datos
-					)";
-			
-			// Ejecutar la inserción en la base de datos
-			return Executor::doit($sql);
-		} else {
-			// Si no se pudo crear el producto en Facturapi
-			echo "Error al crear el producto en Facturapi. Verifica los datos enviados.";
-			return false;
-		}
-	} catch (Exception $e) {
-		// Manejo de excepciones en caso de error en la API
-		echo "Error al interactuar con Facturapi: " . $e->getMessage();
-		return false;
-	}
-}
+
 	
 
 	

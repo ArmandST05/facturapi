@@ -1,6 +1,9 @@
 <div class="row">
   <div class="col-md-12">
     <h1>Nuevo Producto/Medicamento</h1>
+    <small>Por favor agrega la clave del producto registrada por el SAT</small><br>
+    <small>Si no conoces la cleve da click <a href="https://www.sat.gob.mx/consultas/53693/catalogo-de-productos-y-servicios">AQUI</a></small>
+      
     <div id="result"></div>
     <br>
     <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="index.php?action=products/add" role="form" autocomplete="off">
@@ -10,13 +13,25 @@
           <input type="text" name="description" required class="form-control" placeholder="Descripción del Producto" />
         </div>
       </div>
-
-      <div class="form-group">
+    <div class="form-group">
         <label for="inputEmail1" class="col-lg-2 control-label">Clave del Producto*</label>
         <div class="col-md-6">
           <input type="text" name="product_key" required class="form-control" placeholder="Clave del Producto" />
         </div>
       </div>
+          <div class="form-group">
+        <label for="unit" class="col-lg-2 control-label">Unidad de medida*</label>
+        <div class="col-md-6">
+            <select name="unit" required class="form-control" placeholder="Unidad de medida">
+                <option value="pieza">Pieza</option>
+                <option value="kg">Kilogramo (kg)</option>
+                <option value="L">Litro (L)</option>
+                <option value="caja">Caja</option>
+                <option value="paquete">Paquete</option>
+                <!-- Agrega otras opciones según sea necesario -->
+            </select>
+        </div>
+    </div>
 
       <div class="form-group">
         <label for="inputEmail1" class="col-lg-2 control-label">Precio de Salida*</label>
